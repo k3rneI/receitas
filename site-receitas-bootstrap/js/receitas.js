@@ -1,0 +1,31 @@
+const receitas = {
+  lasanha: {
+    titulo: 'Lasanha à bolonhesa', categoria: 'Massas', descricao: 'Uma receita clássica, com molho de carne bem temperado, camadas de massa e queijo derretido. Perfeita para reunir a família.', imagem: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=1400&q=85', tempo: '60 minutos', dificuldade: 'Média', porcoes: '6 porções',
+    ingredientes: ['500 g de carne moída', '1 pacote de massa para lasanha', '1 sachê de molho de tomate (340 g)', '1 cebola picada', '2 dentes de alho picados', '300 g de muçarela fatiada', '200 g de presunto fatiado', 'Azeite, sal e pimenta a gosto', 'Queijo parmesão ralado para gratinar'],
+    preparo: ['Aqueça um fio de azeite e refogue a cebola e o alho.', 'Acrescente a carne moída e cozinhe até dourar. Tempere com sal e pimenta.', 'Adicione o molho de tomate e deixe cozinhar por cerca de 10 minutos.', 'Em um refratário, espalhe um pouco de molho e monte camadas de massa, molho, presunto e muçarela.', 'Repita as camadas e finalize com molho, muçarela e parmesão.', 'Leve ao forno preaquecido a 180 °C por aproximadamente 30 minutos, ou até gratinar. Aguarde alguns minutos antes de servir.']
+  },
+  panqueca: {
+    titulo: 'Panquecas fofinhas', categoria: 'Café da manhã', descricao: 'Panquecas leves e macias, fáceis de preparar e ótimas para acompanhar frutas, mel ou sua cobertura favorita.', imagem: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1400&q=85', tempo: '20 minutos', dificuldade: 'Fácil', porcoes: '4 porções',
+    ingredientes: ['1 xícara de farinha de trigo', '1 colher (sopa) de açúcar', '1 colher (chá) de fermento químico', '1 pitada de sal', '1 ovo', '3/4 de xícara de leite', '2 colheres (sopa) de manteiga derretida', 'Manteiga para untar a frigideira'],
+    preparo: ['Em uma tigela, misture a farinha, o açúcar, o fermento e o sal.', 'Em outro recipiente, bata o ovo com o leite e a manteiga derretida.', 'Junte os ingredientes líquidos aos secos e misture delicadamente até incorporar.', 'Aqueça uma frigideira antiaderente untada com um pouco de manteiga.', 'Coloque pequenas porções de massa. Quando surgirem bolhas na superfície, vire a panqueca.', 'Doure o outro lado e sirva ainda quente com frutas, mel ou outra cobertura.']
+  },
+  brigadeiro: {
+    titulo: 'Brigadeiro tradicional', categoria: 'Sobremesas', descricao: 'Cremoso, chocolatudo e cheio de memória afetiva. Um clássico brasileiro simples de fazer e impossível de resistir.', imagem: 'https://images.unsplash.com/photo-1548907040-4d42bfc2c14b?auto=format&fit=crop&w=1400&q=85', tempo: '25 minutos', dificuldade: 'Fácil', porcoes: '20 unidades',
+    ingredientes: ['1 lata de leite condensado (395 g)', '3 colheres (sopa) de chocolate em pó', '1 colher (sopa) de manteiga', 'Chocolate granulado para enrolar', 'Manteiga para untar as mãos'],
+    preparo: ['Em uma panela, coloque o leite condensado, o chocolate em pó e a manteiga.', 'Misture bem antes de ligar o fogo para dissolver o chocolate.', 'Cozinhe em fogo baixo, mexendo sempre, até a mistura desgrudar do fundo da panela.', 'Transfira para um prato untado e deixe esfriar completamente.', 'Unte as mãos com manteiga, faça pequenas bolinhas e passe no chocolate granulado.', 'Coloque em forminhas e sirva.']
+  }
+};
+const id = new URLSearchParams(location.search).get('id') || 'lasanha';
+const receita = receitas[id] || receitas.lasanha;
+document.title = `${receita.titulo} | Receita & Afeto`;
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+document.getElementById('recipe-content').innerHTML = `
+  <a href="index.html" class="back-link d-inline-block mb-4">← Todas as receitas</a>
+  <div class="detail-header"><span class="category">${receita.categoria}</span><h1>${receita.titulo}</h1><p class="detail-description">${receita.descricao}</p></div>
+  <img class="detail-image" src="${receita.imagem}" alt="${receita.titulo}">
+  <div class="row g-3 recipe-facts my-4"><div class="col-6 col-md-4"><div class="fact"><span>◷</span><small>Tempo de preparo</small><strong>${receita.tempo}</strong></div></div><div class="col-6 col-md-4"><div class="fact"><span>◇</span><small>Dificuldade</small><strong>${receita.dificuldade}</strong></div></div><div class="col-12 col-md-4"><div class="fact"><span>♧</span><small>Rendimento</small><strong>${receita.porcoes}</strong></div></div></div>
+  <div class="row g-5 recipe-body"><aside class="col-lg-4"><div class="ingredients-box"><h2>Ingredientes</h2><p class="text-secondary small">Tudo separado? Então vamos começar!</p><ul class="ingredient-list">${receita.ingredientes.map(item=>`<li>${escapeHTML(item)}</li>`).join('')}</ul></div></aside><section class="col-lg-8"><h2>Modo de preparo</h2><p class="text-secondary small mb-4">Siga o passo a passo e aproveite.</p><ol class="steps-list">${receita.preparo.map((item,i)=>`<li><span class="step-number">${i+1}</span><p>${escapeHTML(item)}</p></li>`).join('')}</ol></section></div>`;
+const storageKey = `receita-afeto-comentarios-${id}`;
+function renderComments(){ const comments=JSON.parse(localStorage.getItem(storageKey)||'[]'); document.getElementById('comment-total').textContent=comments.length; const list=document.getElementById('comments-list'); list.innerHTML=comments.length?comments.map(c=>`<article class="comment-item"><div class="comment-avatar">${escapeHTML(c.name.charAt(0).toUpperCase())}</div><div><strong>${escapeHTML(c.name)}</strong><small>${escapeHTML(c.date)}</small><p>${escapeHTML(c.comment)}</p></div></article>`).join(''):'<p class="text-secondary">Seja a primeira pessoa a comentar!</p>'; }
+document.getElementById('comment-form').addEventListener('submit',event=>{event.preventDefault();const name=document.getElementById('name').value.trim();const comment=document.getElementById('comment').value.trim();if(!name||!comment)return;const comments=JSON.parse(localStorage.getItem(storageKey)||'[]');comments.unshift({name,comment,date:new Date().toLocaleDateString('pt-BR')});localStorage.setItem(storageKey,JSON.stringify(comments));event.target.reset();document.getElementById('form-feedback').textContent='Comentário enviado com sucesso!';renderComments();});
+renderComments();
